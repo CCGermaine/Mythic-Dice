@@ -14,7 +14,7 @@ export default defineConfig({
     fs: {
       allow: [
         "/home/manny/Work/mythic-dice",
-        "/home/manny/Projects/mythic-dice-extension-folder/mythic-dice-artassets/d6_complete",
+        "/home/manny/Projects/mythic-dice-extension-folder/mythic-dice-artassets",
       ],
     },
     port: 5173,

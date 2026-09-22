@@ -1,14 +1,20 @@
 :root {
   color-scheme: light dark;
+  --bg: #faf7f2;
+  --text: #1c1917;
+  --muted: #57534e;
+  --line: #a8a29e;
   font: 16px/1.4 system-ui, sans-serif;
-  color: #1c1917;
-  background: #faf7f2;
+  color: var(--text);
+  background: var(--bg);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: #f5f5f4;
-    background: #1c1917;
+    --bg: #1c1917;
+    --text: #f5f5f4;
+    --muted: #a8a29e;
+    --line: #57534e;
   }
 }
 
@@ -19,7 +25,7 @@ body {
 main {
   box-sizing: border-box;
   min-height: 100vh;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -33,26 +39,63 @@ h1 {
 
 p {
   margin: 0;
+  color: var(--muted);
 }
 
-button {
+#attach {
   font: inherit;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #a8a29e;
-  background: #fff;
+  border: 1px solid var(--line);
+  background: transparent;
   color: inherit;
   cursor: pointer;
 }
 
-button:disabled {
+#attach:disabled {
   cursor: default;
   opacity: 0.55;
 }
 
-@media (prefers-color-scheme: dark) {
-  button {
-    background: #292524;
-    border-color: #57534e;
-  }
+.color-bar {
+  display: flex;
+  gap: 10px;
+}
+
+.swatch {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.swatch[aria-pressed="true"] {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+.dice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.die {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.die img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.die:disabled {
+  cursor: default;
 }

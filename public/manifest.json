@@ -1,13 +1,13 @@
 {
   "name": "Mythic Dice",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "manifest_version": 1,
-  "description": "Mythic Bastionland dice that stay on the table. This build rolls a d6.",
+  "description": "Mythic Bastionland dice that stay on the table.",
   "action": {
     "title": "Mythic Dice",
     "icon": "/icon.svg",
     "popover": "/",
-    "height": 360,
+    "height": 720,
     "width": 320
   },
   "background_url": "/background.html",

@@ -1,16 +1,17 @@
 import OBR, { buildImage } from "@owlbear-rodeo/sdk";
 import {
   DIE_SIZE,
-  D6_COLOR,
   ROLL_MS,
   SPAWN_RADIUS_PX,
   absoluteUrl,
-  d6FacePath,
-  d6RollPath,
+  colorById,
+  dieById,
+  facePath,
   pointAtRadius,
   randomFace,
+  rollPath,
   sameSelection,
-} from "./d6.js";
+} from "./dice.js";
 import {
   DIE_KEY,
   PENDING_KEY,
@@ -66,7 +67,13 @@ async function attachFromSelection(player) {
   OBR.notification.show(`Attached to ${name}`);
 }
 
-async function rollD6(tokenId) {
+async function rollDie(tokenId, dieId, colorId) {
+  const spec = dieById(dieId);
+  const color = colorById(colorId);
+  if (!spec || !color) {
+    OBR.notification.show("That die or color is not in this set.");
+    return;
+  }
   if (!tokenId) {
     OBR.notification.show("Attach a character token first.");
     return;
@@ -87,22 +94,22 @@ async function rollD6(tokenId) {
     return;
   }
 
-  const face = randomFace();
+  const face = randomFace(spec.sides);
   const position = pointAtRadius(token.position, SPAWN_RADIUS_PX);
   const origin = window.location.origin;
-  const rollUrl = absoluteUrl(d6RollPath(D6_COLOR), origin);
-  const faceUrl = absoluteUrl(d6FacePath(face, D6_COLOR), origin);
+  const rollUrl = absoluteUrl(rollPath(spec.id, color.id), origin);
+  const faceUrl = absoluteUrl(facePath(spec.id, face, color.id), origin);
 
   const item = buildImage(imageContent(rollUrl, "video/webm"), grid())
-    .name(`d6 ${face}`)
-    .description(`d6 showing ${face}`)
+    .name(`${spec.id} ${face}`)
+    .description(`${color.label} ${spec.id} showing ${face}`)
     .layer("PROP")
     .position(position)
     .metadata({
       [DIE_KEY]: {
-        die: "d6",
+        die: spec.id,
         face,
-        color: D6_COLOR,
+        color: color.id,
         phase: "rolling",
         ownerTokenId: tokenId,
       },
@@ -123,7 +130,7 @@ async function rollD6(tokenId) {
     }
   });
 
-  OBR.notification.show(`Rolled d6: ${face}`);
+  OBR.notification.show(`Rolled ${spec.id}: ${face}`);
 }
 
 async function rollFromRequest(player) {
@@ -131,9 +138,11 @@ async function rollFromRequest(player) {
   if (!request?.id || handledRolls.has(request.id)) return;
   handledRolls.add(request.id);
   const tokenId = player.metadata[TOKEN_KEY];
+  const dieId = request.die;
+  const colorId = request.color;
   await OBR.player.setMetadata({ [ROLL_KEY]: null });
   try {
-    await rollD6(tokenId);
+    await rollDie(tokenId, dieId, colorId);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Roll failed.";
     OBR.notification.show(message);

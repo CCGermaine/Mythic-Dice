@@ -2,27 +2,32 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   SPAWN_RADIUS_PX,
-  d6FacePath,
-  d6RollPath,
+  facePath,
   pointAtRadius,
+  previewPath,
   randomFace,
+  rollPath,
   sameSelection,
-} from "./d6.js";
+} from "./dice.js";
 
 function sequence(values) {
   let index = 0;
   return () => values[index++];
 }
 
-test("randomFace stays on 1 through 6", () => {
-  assert.equal(randomFace(sequence([0])), 1);
-  assert.equal(randomFace(sequence([0.999])), 6);
-  assert.equal(randomFace(sequence([0.5])), 4);
+test("randomFace stays inside the die's sides", () => {
+  assert.equal(randomFace(6, sequence([0])), 1);
+  assert.equal(randomFace(6, sequence([0.999])), 6);
+  assert.equal(randomFace(20, sequence([0.999])), 20);
+  assert.equal(randomFace(4, sequence([0.5])), 3);
 });
 
-test("face and roll paths use the flat and rolling filenames", () => {
-  assert.equal(d6FacePath(3), "/art/d6/d6_flat/d6_white_03_flat.webp");
-  assert.equal(d6RollPath(), "/art/d6/d6_roll/d6_white_rolling.webm");
+test("paths use the flat preview, rolled face, and rolling clip", () => {
+  assert.equal(previewPath("d8", "red"), "/art/d8/d8_flat/d8_red_08_flat.webp");
+  assert.equal(previewPath("d10", "blue"), "/art/d10/d10_flat/d10_blue_10_flat.webp");
+  assert.equal(previewPath("d20", "black"), "/art/d20/d20_flat/d20_black_20_flat.webp");
+  assert.equal(facePath("d12", 7, "green"), "/art/d12/d12_flat/d12_green_07_flat.webp");
+  assert.equal(rollPath("d4", "white"), "/art/d4/d4_roll/d4_white_rolling.webm");
 });
 
 test("spawn point sits on the 175px circle", () => {
