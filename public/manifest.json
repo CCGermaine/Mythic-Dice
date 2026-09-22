@@ -15,6 +15,10 @@
     {
       "name": "autoplay",
       "reason": "Play the short dice roll video on the table."
+    },
+    {
+      "name": "PROP_DELETE",
+      "reason": "Clear dice from the scene when the player clicks the Clear color dice button."
     }
   ]
 }

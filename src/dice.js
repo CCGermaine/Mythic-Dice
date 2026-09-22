@@ -1,6 +1,9 @@
 export const DIE_SIZE = 512;
 export const SPAWN_RADIUS_PX = 175;
-// The glide always ends before 1.5s. The still face replaces the clip at that stop.
+// Rolls land as image items. The roll clip plays, then the same item
+// becomes a static face. Each click adds another die. Colors are
+// white, red, blue, green, and black. The blue art is the teal
+// pigment in the files.
 export const ROLL_MS_MIN = 650;
 export const ROLL_MS_MAX = 1450;
 export const DEFAULT_COLOR = "white";
@@ -62,30 +65,6 @@ export function rollDuration(random = Math.random) {
 export function spinDegrees(random = Math.random) {
   const magnitude = 120 + random() * 240;
   return random() < 0.5 ? -magnitude : magnitude;
-}
-
-export function easeOutCubic(progress) {
-  const t = Math.min(1, Math.max(0, progress));
-  return 1 - (1 - t) ** 3;
-}
-
-export function glideSample(from, to, spin, progress) {
-  const eased = easeOutCubic(progress);
-  return {
-    position: {
-      x: from.x + (to.x - from.x) * eased,
-      y: from.y + (to.y - from.y) * eased,
-    },
-    rotation: spin * eased,
-  };
-}
-
-export function pointAtRadius(center, radius, random = Math.random) {
-  const angle = random() * Math.PI * 2;
-  return {
-    x: center.x + Math.cos(angle) * radius,
-    y: center.y + Math.sin(angle) * radius,
-  };
 }
 
 export function absoluteUrl(path, origin) {
