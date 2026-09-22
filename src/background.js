@@ -6,8 +6,6 @@ import {
   colorById,
   dieById,
   facePath,
-  glideSample,
-  pointAtRadius,
   randomFace,
   rollDuration,
   rollPath,
@@ -24,6 +22,27 @@ import {
 
 const handledRolls = new Set();
 let clearingTokenId = null;
+let lastTokenId = null;
+let rollCount = 0;
+
+function nextSpawnPoint(tokenId, tokenPos) {
+  if (tokenId !== lastTokenId) {
+    lastTokenId = tokenId;
+    rollCount = 0;
+  }
+  const index = rollCount;
+  rollCount++;
+  const ring = Math.floor(index / 8);
+  const ringRadius = SPAWN_RADIUS_PX + ring * 125;
+  const jitterDeg = Math.max(8, 20 - ring * 4);
+  const slotAngle = ((index % 8) / 8) * Math.PI * 2;
+  const jitterRad = (Math.random() - 0.5) * (jitterDeg / 180 * Math.PI);
+  const angle = slotAngle + jitterRad;
+  return {
+    x: tokenPos.x + Math.cos(angle) * ringRadius,
+    y: tokenPos.y + Math.sin(angle) * ringRadius,
+  };
+}
 
 function imageContent(url, mime) {
   return {
@@ -97,7 +116,7 @@ async function rollDie(tokenId, dieId, colorId) {
   }
 
   const face = randomFace(spec.sides);
-  const to = pointAtRadius(token.position, SPAWN_RADIUS_PX);
+  const to = nextSpawnPoint(tokenId, token.position);
   const duration = rollDuration();
   const spin = spinDegrees();
   const origin = window.location.origin;
