@@ -38,6 +38,31 @@ The roll item starts as `{die}_{color}_rolling.webm` (`video/webm`). When the cl
 
 With a token attached and a color selected, click **Clear color dice** below the dice grid to remove every die of that color that you rolled from the attached token. Other players' dice are not affected. Dice from a different token are not affected. The button is disabled until a token is attached, and its label reflects the currently selected color (e.g. "Clear blue dice"). The clear action checks the room's `PROP_DELETE` permission and notifies you if it is not allowed.
 
+## Manifest
+
+```json
+{
+  "name": "Mythic Dice",
+  "version": "0.0.4",
+  "manifest_version": 1,
+  "description": "Mythic Bastionland dice that stay on the table.",
+  "action": {
+    "title": "Mythic Dice",
+    "icon": "/icon.svg",
+    "popover": "/",
+    "height": 500,
+    "width": 280
+  },
+  "background_url": "/background.html",
+  "permissions": [
+    { "name": "autoplay", "reason": "Play the short dice roll video on the table." },
+    { "name": "PROP_DELETE", "reason": "Clear dice from the scene when the player clicks the Clear color dice button." }
+  ]
+}
+```
+
+`autoplay` allows the roll clip to start without a user gesture on every click. `PROP_DELETE` allows the Clear color dice button to remove props from the scene. The popover and background page are served from the same dev server at `http://localhost:5173/`.
+
 ## Metadata
 
 All keys live under the extension namespace `com.mythic-dice/`. Three are stored on the player, one on each die item, and two are transient request/snapshot keys used during attachment.
