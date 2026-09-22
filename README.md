@@ -62,7 +62,7 @@ All keys live under the extension namespace `com.mythic-dice/`. Three are stored
 
 ### Where they live in the code
 
-- Player keys: `src/ids.js` (`TOKEN_KEY`, `COLOR_KEY`, `ROLL_KEY`, `PENDING_KEY`, `SNAPSHOT_KEY`)
+- Player keys: `src/ids.js` (`TOKEN_KEY`, `COLOR_KEY`, `ROLL_KEY`, `PENDING_KEY`, `SNAPSHOT_KEY`, `CLEAR_COLOR_KEY`)
 - Item key: `src/ids.js` (`DIE_KEY`)
 - Popover set/get: `src/main.js`
 - Background read/handle: `src/background.js`
