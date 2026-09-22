@@ -191,6 +191,11 @@ async function clearColorFromRequest(player) {
   const colorId = player.metadata[CLEAR_COLOR_KEY];
   if (!colorId) return;
   await OBR.player.setMetadata({ [CLEAR_COLOR_KEY]: null });
+
+  // Reset spawn ring: next die after clearing starts at first ring, first slot.
+  lastTokenId = player.metadata[TOKEN_KEY] ?? null;
+  rollCount = 0;
+
   try {
     if (!(await OBR.scene.isReady())) return;
     if (!(await OBR.player.hasPermission("PROP_DELETE"))) {
