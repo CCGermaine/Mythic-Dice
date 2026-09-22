@@ -13,6 +13,7 @@ import {
   ROLL_KEY,
   SNAPSHOT_KEY,
   TOKEN_KEY,
+  CLEAR_COLOR_KEY,
 } from "./ids.js";
 
 const app = document.querySelector("#app");
@@ -47,12 +48,14 @@ app.innerHTML = `
     <p id="token-status">No token attached.</p>
     <div class="color-bar" role="group" aria-label="Die color">${colorButtons}</div>
     <div class="dice">${dieButtonsHtml}</div>
+    <button id="clear-color" type="button" disabled>Clear color dice</button>
   </main>
 `;
 
 const status = document.querySelector("#status");
 const tokenStatus = document.querySelector("#token-status");
 const attachButton = document.querySelector("#attach");
+const clearButton = document.querySelector("#clear-color");
 const swatches = [...document.querySelectorAll(".swatch")];
 const dice = [...document.querySelectorAll(".die")];
 
@@ -72,6 +75,8 @@ function paintDice() {
     img.alt = `${selectedColor} ${button.dataset.die}`;
     button.disabled = !canRoll;
   }
+  clearButton.disabled = !canRoll;
+  clearButton.textContent = `Clear ${selectedColor} dice`;
 }
 
 function applyTheme(theme) {
@@ -160,6 +165,13 @@ attachButton.addEventListener("click", async () => {
     [SNAPSHOT_KEY]: selection,
   });
   await OBR.player.deselect();
+});
+
+clearButton.addEventListener("click", async () => {
+  if (!canRoll || !OBR.isAvailable) return;
+  await OBR.player.setMetadata({
+    [CLEAR_COLOR_KEY]: selectedColor,
+  });
 });
 
 paintDice();

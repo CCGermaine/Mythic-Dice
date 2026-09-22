@@ -18,6 +18,7 @@ import {
   ROLL_KEY,
   SNAPSHOT_KEY,
   TOKEN_KEY,
+  CLEAR_COLOR_KEY,
 } from "./ids.js";
 
 const handledRolls = new Set();
@@ -186,10 +187,42 @@ async function detachIfTokenMissing() {
   OBR.notification.show("Attached token was removed.");
 }
 
+async function clearColorFromRequest(player) {
+  const colorId = player.metadata[CLEAR_COLOR_KEY];
+  if (!colorId) return;
+  await OBR.player.setMetadata({ [CLEAR_COLOR_KEY]: null });
+  try {
+    if (!(await OBR.scene.isReady())) return;
+    if (!(await OBR.player.hasPermission("PROP_DELETE"))) {
+      OBR.notification.show("This room does not allow deleting props.");
+      return;
+    }
+    const tokenId = player.metadata[TOKEN_KEY];
+    const allItems = await OBR.scene.items.getItems();
+    const idsToDelete = allItems
+      .filter((item) => item.layer === "PROP")
+      .filter((item) => {
+        const die = item.metadata?.[DIE_KEY];
+        return die?.color === colorId && die?.ownerTokenId === tokenId;
+      })
+      .map((item) => item.id);
+    if (idsToDelete.length === 0) {
+      OBR.notification.show("No dice of that color on this token.");
+      return;
+    }
+    await OBR.scene.items.deleteItems(idsToDelete);
+    OBR.notification.show(`Removed ${idsToDelete.length} die${idsToDelete.length === 1 ? "" : "s"}.`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Clear failed.";
+    OBR.notification.show(message);
+  }
+}
+
 OBR.onReady(() => {
   OBR.player.onChange((player) => {
     attachFromSelection(player);
     rollFromRequest(player);
+    clearColorFromRequest(player);
   });
 
   let watchingScene = false;

@@ -60,6 +60,22 @@ p {
   opacity: 0.55;
 }
 
+#clear-color {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+#clear-color:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
 .color-bar {
   display: flex;
   justify-content: center;
