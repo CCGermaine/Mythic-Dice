@@ -97,8 +97,7 @@ async function rollDie(tokenId, dieId, colorId) {
   }
 
   const face = randomFace(spec.sides);
-  const from = { x: token.position.x, y: token.position.y };
-  const to = pointAtRadius(from, SPAWN_RADIUS_PX);
+  const to = pointAtRadius(token.position, SPAWN_RADIUS_PX);
   const duration = rollDuration();
   const spin = spinDegrees();
   const origin = window.location.origin;
@@ -109,8 +108,8 @@ async function rollDie(tokenId, dieId, colorId) {
     .name(`${spec.id} ${face}`)
     .description(`${color.label} ${spec.id} showing ${face}`)
     .layer("PROP")
-    .position(from)
-    .rotation(0)
+    .position(to)
+    .rotation(spin)
     .metadata({
       [DIE_KEY]: {
         die: spec.id,
@@ -123,37 +122,11 @@ async function rollDie(tokenId, dieId, colorId) {
     .build();
 
   await OBR.scene.items.addItems([item]);
-  let stopInteraction = () => {};
-  try {
-    const [updateInteraction, stop] = await OBR.interaction.startItemInteraction(item);
-    stopInteraction = stop;
-    const started = performance.now();
-    await new Promise((resolve) => {
-      const frame = (now) => {
-        const progress = Math.min(1, (now - started) / duration);
-        const sample = glideSample(from, to, spin, progress);
-        updateInteraction((draft) => {
-          draft.position = sample.position;
-          draft.rotation = sample.rotation;
-        });
-        if (progress < 1) {
-          requestAnimationFrame(frame);
-        } else {
-          resolve();
-        }
-      };
-      requestAnimationFrame(frame);
-    });
-  } finally {
-    stopInteraction();
-  }
 
-  const landed = glideSample(from, to, spin, 1);
+  await new Promise((resolve) => setTimeout(resolve, duration));
 
   await OBR.scene.items.updateItems([item.id], (items) => {
     for (const draft of items) {
-      draft.position = landed.position;
-      draft.rotation = landed.rotation;
       draft.image.url = faceUrl;
       draft.image.mime = "image/webp";
       draft.metadata[DIE_KEY].phase = "landed";
