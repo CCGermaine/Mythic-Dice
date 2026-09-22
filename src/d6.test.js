@@ -4,7 +4,7 @@ import {
   SPAWN_RADIUS_PX,
   d6FacePath,
   d6RollPath,
-  pointWithinRadius,
+  pointAtRadius,
   randomFace,
   sameSelection,
 } from "./d6.js";
@@ -25,13 +25,13 @@ test("face and roll paths use the flat and rolling filenames", () => {
   assert.equal(d6RollPath(), "/art/d6/d6_roll/d6_white_rolling.webm");
 });
 
-test("spawn point stays inside the 100px disk", () => {
+test("spawn point sits on the 175px circle", () => {
   const center = { x: 10, y: 20 };
-  const point = pointWithinRadius(center, SPAWN_RADIUS_PX, sequence([0.25, 0.25]));
+  const point = pointAtRadius(center, SPAWN_RADIUS_PX, sequence([0.25]));
   assert.ok(Math.abs(point.x - 10) < 1e-9);
-  assert.ok(Math.abs(point.y - 70) < 1e-9);
+  assert.ok(Math.abs(point.y - 195) < 1e-9);
   const distance = Math.hypot(point.x - center.x, point.y - center.y);
-  assert.ok(distance <= SPAWN_RADIUS_PX);
+  assert.ok(Math.abs(distance - SPAWN_RADIUS_PX) < 1e-9);
 });
 
 test("selection compare ignores order", () => {

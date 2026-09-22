@@ -1,8 +1,8 @@
 export const DIE_SIZE = 512;
-export const SPAWN_RADIUS_PX = 100;
-// The white roll clip is 8 frames at 24 fps (0.334s). Wait slightly longer
-// so the scene swaps to the still face after that clip has played.
-export const ROLL_MS = 450;
+export const SPAWN_RADIUS_PX = 175;
+// Hold the roll clip on the scene for 1.5s, then swap to the still face.
+// The file itself is 8 frames (0.334s); Owlbear keeps showing that item until we swap it.
+export const ROLL_MS = 1500;
 export const D6_COLOR = "white";
 
 export function padFace(face) {
@@ -21,12 +21,11 @@ export function randomFace(random = Math.random) {
   return 1 + Math.floor(random() * 6);
 }
 
-export function pointWithinRadius(center, radius, random = Math.random) {
+export function pointAtRadius(center, radius, random = Math.random) {
   const angle = random() * Math.PI * 2;
-  const distance = Math.sqrt(random()) * radius;
   return {
-    x: center.x + Math.cos(angle) * distance,
-    y: center.y + Math.sin(angle) * distance,
+    x: center.x + Math.cos(angle) * radius,
+    y: center.y + Math.sin(angle) * radius,
   };
 }
 

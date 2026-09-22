@@ -27,9 +27,11 @@ Reload the extension after pulling this version. The manifest now includes a bac
 2. Click **Attach to Token**, then click one item on the Character layer.
 3. Click **Roll d6**.
 
-The extension stores the token id on the player under `com.mythic-dice/attachedTokenId`. It does not set the die's `attachedTo` field. `attachedTo` would parent the die to the token and move it whenever the token moves. The die is a Prop image placed within 100 pixels of the token's center, on a random point inside that disk. Each roll adds another die.
+The extension stores the token id on the player under `com.mythic-dice/attachedTokenId`. It does not set the die's `attachedTo` field. `attachedTo` would parent the die to the token and move it whenever the token moves. The die is a Prop image placed at 175 pixels from the token's center, on a random angle around that circle. Each roll adds another die.
 
-The roll item starts as `d6_white_rolling.webm` (`video/webm`) and, after 450ms, the same item becomes `d6_white_NN_flat.webp` (`image/webp`). The face is a random number from 1 to 6. The color is white for this slice.
+Clicking **Attach to Token** clears the current token and waits for the next Character-layer click, so a later press can pick a different token. If that token is deleted or leaves the Character layer, the attachment clears too.
+
+The roll item starts as `d6_white_rolling.webm` (`video/webm`) and, after 1.5 seconds, the same item becomes `d6_white_NN_flat.webp` (`image/webp`). The face is a random number from 1 to 6. The color is white for this slice.
 
 Scene items sync to the room, so other players see the die. The image URL is this dev server. A browser on another machine cannot load `localhost`, so remote players see the item without the picture until the extension is hosted.
 

@@ -65,6 +65,7 @@ async function render(player) {
 attachButton.addEventListener("click", async () => {
   const selection = (await OBR.player.getSelection()) ?? [];
   await OBR.player.setMetadata({
+    [TOKEN_KEY]: null,
     [PENDING_KEY]: true,
     [SNAPSHOT_KEY]: selection,
   });

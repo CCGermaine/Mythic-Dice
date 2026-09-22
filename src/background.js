@@ -7,7 +7,7 @@ import {
   absoluteUrl,
   d6FacePath,
   d6RollPath,
-  pointWithinRadius,
+  pointAtRadius,
   randomFace,
   sameSelection,
 } from "./d6.js";
@@ -20,6 +20,7 @@ import {
 } from "./ids.js";
 
 const handledRolls = new Set();
+let clearingTokenId = null;
 
 function imageContent(url, mime) {
   return {
@@ -42,13 +43,20 @@ async function attachFromSelection(player) {
   if (!(await OBR.scene.isReady())) return;
 
   const selection = player.selection ?? [];
-  if (sameSelection(selection, player.metadata[SNAPSHOT_KEY])) return;
-  if (selection.length === 0) return;
+  const blocked = player.metadata[SNAPSHOT_KEY] ?? [];
+  if (sameSelection(selection, blocked)) return;
+  if (selection.length === 0) {
+    if (blocked.length !== 0) {
+      await OBR.player.setMetadata({ [SNAPSHOT_KEY]: [] });
+    }
+    return;
+  }
 
   const items = await OBR.scene.items.getItems(selection);
   const token = items.find((item) => item.layer === "CHARACTER");
   if (!token) return;
 
+  clearingTokenId = null;
   await OBR.player.setMetadata({
     [TOKEN_KEY]: token.id,
     [PENDING_KEY]: false,
@@ -80,7 +88,7 @@ async function rollD6(tokenId) {
   }
 
   const face = randomFace();
-  const position = pointWithinRadius(token.position, SPAWN_RADIUS_PX);
+  const position = pointAtRadius(token.position, SPAWN_RADIUS_PX);
   const origin = window.location.origin;
   const rollUrl = absoluteUrl(d6RollPath(D6_COLOR), origin);
   const faceUrl = absoluteUrl(d6FacePath(face, D6_COLOR), origin);
@@ -132,9 +140,43 @@ async function rollFromRequest(player) {
   }
 }
 
+async function detachIfTokenMissing() {
+  const metadata = await OBR.player.getMetadata();
+  const tokenId = metadata[TOKEN_KEY];
+  if (!tokenId || clearingTokenId === tokenId) return;
+  if (!(await OBR.scene.isReady())) return;
+
+  const items = await OBR.scene.items.getItems([tokenId]);
+  const token = items[0];
+  if (token && token.layer === "CHARACTER") return;
+
+  clearingTokenId = tokenId;
+  const latest = await OBR.player.getMetadata();
+  if (latest[TOKEN_KEY] !== tokenId) return;
+  await OBR.player.setMetadata({ [TOKEN_KEY]: null });
+  OBR.notification.show("Attached token was removed.");
+}
+
 OBR.onReady(() => {
   OBR.player.onChange((player) => {
     attachFromSelection(player);
     rollFromRequest(player);
+  });
+
+  let watchingScene = false;
+  const watchScene = () => {
+    if (watchingScene) return;
+    watchingScene = true;
+    OBR.scene.items.onChange(() => {
+      detachIfTokenMissing();
+    });
+    detachIfTokenMissing();
+  };
+
+  OBR.scene.isReady().then((ready) => {
+    if (ready) watchScene();
+  });
+  OBR.scene.onReadyChange((ready) => {
+    if (ready) watchScene();
   });
 });
