@@ -1,13 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  ROLL_MS_MAX,
+  ROLL_MS_MIN,
   SPAWN_RADIUS_PX,
   facePath,
+  glideSample,
   pointAtRadius,
   previewPath,
   randomFace,
+  rollDuration,
   rollPath,
   sameSelection,
+  spinDegrees,
 } from "./dice.js";
 
 function sequence(values) {
@@ -37,6 +42,28 @@ test("spawn point sits on the 175px circle", () => {
   assert.ok(Math.abs(point.y - 195) < 1e-9);
   const distance = Math.hypot(point.x - center.x, point.y - center.y);
   assert.ok(Math.abs(distance - SPAWN_RADIUS_PX) < 1e-9);
+});
+
+test("glide eases out from the token and stops on the landing pose", () => {
+  const from = { x: 0, y: 0 };
+  const to = { x: 175, y: 0 };
+  const start = glideSample(from, to, 180, 0);
+  const mid = glideSample(from, to, 180, 0.5);
+  const end = glideSample(from, to, 180, 1);
+  assert.deepEqual(start.position, from);
+  assert.equal(start.rotation, 0);
+  assert.ok(mid.position.x > 175 * 0.8);
+  assert.ok(mid.rotation > 140);
+  assert.deepEqual(end.position, to);
+  assert.equal(end.rotation, 180);
+});
+
+test("roll duration stays inside the open 1.5s window", () => {
+  assert.equal(rollDuration(() => 0), ROLL_MS_MIN);
+  assert.ok(rollDuration(() => 0.999) < ROLL_MS_MAX + 1);
+  assert.ok(rollDuration(() => 0.999) < 1500);
+  const spin = spinDegrees(() => 0);
+  assert.ok(spin === 120 || spin === -120);
 });
 
 test("selection compare ignores order", () => {

@@ -1,14 +1,14 @@
 {
   "name": "Mythic Dice",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "manifest_version": 1,
   "description": "Mythic Bastionland dice that stay on the table.",
   "action": {
     "title": "Mythic Dice",
     "icon": "/icon.svg",
     "popover": "/",
-    "height": 720,
-    "width": 320
+    "height": 500,
+    "width": 280
   },
   "background_url": "/background.html",
   "permissions": [

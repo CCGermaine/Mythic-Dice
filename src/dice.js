@@ -1,8 +1,8 @@
 export const DIE_SIZE = 512;
 export const SPAWN_RADIUS_PX = 175;
-// Hold the roll clip on the scene for 1.5s, then swap to the still face.
-// The file itself is short; Owlbear keeps showing that item until we swap it.
-export const ROLL_MS = 1500;
+// The glide always ends before 1.5s. The still face replaces the clip at that stop.
+export const ROLL_MS_MIN = 650;
+export const ROLL_MS_MAX = 1450;
 export const DEFAULT_COLOR = "white";
 
 export const DICE = [
@@ -53,6 +53,31 @@ export function previewPath(die, color) {
 
 export function randomFace(sides, random = Math.random) {
   return 1 + Math.floor(random() * sides);
+}
+
+export function rollDuration(random = Math.random) {
+  return ROLL_MS_MIN + random() * (ROLL_MS_MAX - ROLL_MS_MIN);
+}
+
+export function spinDegrees(random = Math.random) {
+  const magnitude = 120 + random() * 240;
+  return random() < 0.5 ? -magnitude : magnitude;
+}
+
+export function easeOutCubic(progress) {
+  const t = Math.min(1, Math.max(0, progress));
+  return 1 - (1 - t) ** 3;
+}
+
+export function glideSample(from, to, spin, progress) {
+  const eased = easeOutCubic(progress);
+  return {
+    position: {
+      x: from.x + (to.x - from.x) * eased,
+      y: from.y + (to.y - from.y) * eased,
+    },
+    rotation: spin * eased,
+  };
 }
 
 export function pointAtRadius(center, radius, random = Math.random) {

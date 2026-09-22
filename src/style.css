@@ -4,7 +4,7 @@
   --text: #1c1917;
   --muted: #57534e;
   --line: #a8a29e;
-  font: 16px/1.4 system-ui, sans-serif;
+  font: 13px/1.3 system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
 }
@@ -24,27 +24,30 @@ body {
 
 main {
   box-sizing: border-box;
-  min-height: 100vh;
-  padding: 16px;
+  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 650;
+  text-align: center;
 }
 
 p {
   margin: 0;
+  font-size: 12px;
   color: var(--muted);
+  text-align: center;
 }
 
 #attach {
   font: inherit;
-  padding: 10px 12px;
+  font-size: 13px;
+  padding: 6px 10px;
   border-radius: 8px;
   border: 1px solid var(--line);
   background: transparent;
@@ -59,12 +62,13 @@ p {
 
 .color-bar {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
 }
 
 .swatch {
-  width: 36px;
-  height: 36px;
+  width: 26px;
+  height: 26px;
   padding: 0;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -74,13 +78,14 @@ p {
 
 .swatch[aria-pressed="true"] {
   outline: 2px solid var(--text);
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .dice {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
+  grid-template-columns: 78px 78px;
+  gap: 0;
+  justify-content: center;
 }
 
 .die {
@@ -92,8 +97,9 @@ p {
 
 .die img {
   display: block;
-  width: 100%;
-  height: auto;
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
 }
 
 .die:disabled {
