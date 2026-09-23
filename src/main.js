@@ -174,22 +174,13 @@ clearButton.addEventListener("click", async () => {
   });
 });
 
-paintDice();
-
-if (!OBR.isAvailable) {
-  status.textContent =
-    "Opened outside Owlbear. Add http://localhost:5173/manifest.json in your profile, enable it in a room, and open the Mythic Dice action.";
-  attachButton.disabled = true;
-  canRoll = false;
+OBR.onReady(async () => {
+  status.textContent = "Connected to Owlbear.";
+  applyTheme(await OBR.theme.getTheme());
+  OBR.theme.onChange(applyTheme);
   paintDice();
-} else {
-  OBR.onReady(async () => {
-    status.textContent = "Connected to Owlbear.";
-    applyTheme(await OBR.theme.getTheme());
-    OBR.theme.onChange(applyTheme);
-    const metadata = await OBR.player.getMetadata();
-    const selection = (await OBR.player.getSelection()) ?? [];
-    await render({ metadata, selection });
-    OBR.player.onChange(render);
-  });
-}
+  const metadata = await OBR.player.getMetadata();
+  const selection = (await OBR.player.getSelection()) ?? [];
+  await render({ metadata, selection });
+  OBR.player.onChange(render);
+});

@@ -55,13 +55,12 @@ With a token attached and a color selected, click **Clear color dice** below the
   },
   "background_url": "/background.html",
   "permissions": [
-    { "name": "autoplay", "reason": "Play the short dice roll video on the table." },
-    { "name": "PROP_DELETE", "reason": "Clear dice from the scene when the player clicks the Clear color dice button." }
+    { "name": "autoplay", "reason": "Play the short dice roll video on the table." }
   ]
 }
 ```
 
-`autoplay` allows the roll clip to start without a user gesture on every click. `PROP_DELETE` allows the Clear color dice button to remove props from the scene. The popover and background page are served from the same dev server at `http://localhost:5173/`.
+`autoplay` allows the roll clip to start without a user gesture on every click. Owlbear Rodeo only accepts a fixed set of permission names in the manifest (`autoplay`, `clipboard-read`, `clipboard-write`, `bluetooth`, `camera`, `microphone`, `usb`, `display-capture`, `hid`), so `PROP_DELETE` cannot be declared there. The **Clear color dice** feature still works: it checks the room's `PROP_DELETE` permission at runtime by issuing a `PROP_DELETE` operation against the scene and notifying you if the room does not allow it. The popover and background page are served from the same dev server at `http://localhost:5173/`.
 
 ## Metadata
 
