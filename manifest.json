@@ -1,0 +1,20 @@
+{
+  "name": "Mythic Dice",
+  "version": "0.0.4",
+  "manifest_version": 1,
+  "description": "Mythic Bastionland dice that stay on the table.",
+  "action": {
+    "title": "Mythic Dice",
+    "icon": "https://ccgermaine.github.io/Mythic-Dice/icon.svg",
+    "popover": "https://ccgermaine.github.io/Mythic-Dice/",
+    "height": 500,
+    "width": 280
+  },
+  "background_url": "https://ccgermaine.github.io/Mythic-Dice/background.html",
+  "permissions": [
+    {
+      "name": "autoplay",
+      "reason": "Play the short dice roll video on the table."
+    }
+  ]
+}
