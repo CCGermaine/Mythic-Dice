@@ -120,9 +120,8 @@ async function rollDie(tokenId, dieId, colorId) {
   const to = nextSpawnPoint(tokenId, token.position);
   const duration = rollDuration();
   const spin = spinDegrees();
-  const origin = window.location.origin;
-  const rollUrl = absoluteUrl(rollPath(spec.id, color.id), origin);
-  const faceUrl = absoluteUrl(facePath(spec.id, face, color.id), origin);
+  const rollUrl = absoluteUrl(rollPath(spec.id, color.id));
+  const faceUrl = absoluteUrl(facePath(spec.id, face, color.id));
 
   const item = buildImage(imageContent(rollUrl, "video/webm"), grid())
     .name(`${spec.id} ${face}`)

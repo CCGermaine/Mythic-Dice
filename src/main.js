@@ -4,6 +4,7 @@ import {
   COLORS,
   DEFAULT_COLOR,
   POPOVER_ORDER,
+  absoluteUrl,
   colorById,
   previewPath,
 } from "./dice.js";
@@ -71,7 +72,7 @@ function paintDice() {
   }
   for (const button of dice) {
     const img = button.querySelector("img");
-    img.src = previewPath(button.dataset.die, selectedColor);
+    img.src = absoluteUrl(previewPath(button.dataset.die, selectedColor));
     img.alt = `${selectedColor} ${button.dataset.die}`;
     button.disabled = !canRoll;
   }

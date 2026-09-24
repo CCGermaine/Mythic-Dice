@@ -67,8 +67,19 @@ export function spinDegrees(random = Math.random) {
   return random() < 0.5 ? -magnitude : magnitude;
 }
 
-export function absoluteUrl(path, origin) {
-  return new URL(path, origin).href;
+function extensionBase(pageHref, basePath) {
+  const env = import.meta.env;
+  const base = basePath ?? (env && env.BASE_URL ? env.BASE_URL : "/");
+  const withSlash = base.endsWith("/") ? base : `${base}/`;
+  const page = pageHref ?? globalThis.location?.href ?? "http://localhost/";
+  return new URL(withSlash, page);
+}
+
+// A leading slash is the die path, not the domain root. Scene items store
+// the absolute result, and other players fetch it from Owlbear.
+export function absoluteUrl(path, pageHref, basePath) {
+  const relative = String(path).replace(/^\/+/, "");
+  return new URL(relative, extensionBase(pageHref, basePath)).href;
 }
 
 export function sameSelection(a, b) {
