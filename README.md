@@ -1,98 +1,23 @@
 # Mythic Dice
 
-Owlbear Rodeo extension for a Mythic Bastionland table. Dice land on the scene as image items and stay there. Owlbear's move tool drags them.
+Install this Owlbear Rodeo extension with:
 
-Attach a character token, pick a color, then click a die. The roll clip plays, then that same item becomes a static face.
-
-## Run
-
-```bash
-npm install
-npm run dev
+```
+https://ccgermaine.github.io/Mythic-Dice/manifest.json
 ```
 
-Dev server: `http://localhost:5173/`
+1. In Owlbear Rodeo, open your profile and click **Add Extension**.
+2. Paste the link above.
+3. Open your room, turn **Mythic Dice** on in the room's extension list, and click its icon.
 
-Install link, with no extra characters after `json`:
+Dice land on the scene and stay there. Drag one with Owlbear's move tool.
 
-```text
-http://localhost:5173/manifest.json
-```
+## Roll
 
-Reload the extension after pulling this version. The manifest now includes a background page, and Owlbear keeps the previous manifest until it is refreshed.
+1. Click **Attach to Token**, then click a character token.
+2. Pick a color: white, red, blue, green, or black.
+3. Click a die. Each click adds another die.
 
-## d6 roll
+Click **Attach to Token** again to choose a different character.
 
-1. Open the **Mythic Dice** action.
-2. Click **Attach to Token**, then click one item on the Character layer.
-3. Pick a color from the swatch bar. The six dice in the popover switch to that color's highest face: d4 shows 4, d6 shows 6, d8 shows 8, d10 shows 10, d12 shows 12, and d20 shows 20.
-4. Click one of those dice to roll it.
-
-Then roll a die. Each click adds another die. There is no result notification. Colors are white, red, blue, green, and black. The blue art is the teal pigment in the files.
-
-Clicking **Attach to Token** clears the current token and waits for the next Character-layer click, so a later press can pick a different token. If that token is deleted or leaves the Character layer, the attachment clears too.
-
-The roll item starts as `{die}_{color}_rolling.webm` (`video/webm`). When the clip ends, the same item becomes `{die}_{color}_{NN}_flat.webp` (`image/webp`) at its 175px position and keeps the angle it was created with. The face is a random number from 1 through that die's highest face.
-
-## Clear color dice
-
-With a token attached and a color selected, click **Clear color dice** below the dice grid to remove every die of that color that you rolled from the attached token. Other players' dice are not affected. Dice from a different token are not affected. The button is disabled until a token is attached, and its label reflects the currently selected color (e.g. "Clear blue dice"). The clear action checks the room's `PROP_DELETE` permission and notifies you if it is not allowed.
-
-## Manifest
-
-```json
-{
-  "name": "Mythic Dice",
-  "version": "0.0.4",
-  "manifest_version": 1,
-  "description": "Mythic Bastionland dice that stay on the table.",
-  "action": {
-    "title": "Mythic Dice",
-    "icon": "/icon.svg",
-    "popover": "/",
-    "height": 500,
-    "width": 280
-  },
-  "background_url": "/background.html",
-  "permissions": [
-    { "name": "autoplay", "reason": "Play the short dice roll video on the table." }
-  ]
-}
-```
-
-`autoplay` allows the roll clip to start without a user gesture on every click. Owlbear Rodeo only accepts a fixed set of permission names in the manifest (`autoplay`, `clipboard-read`, `clipboard-write`, `bluetooth`, `camera`, `microphone`, `usb`, `display-capture`, `hid`), so `PROP_DELETE` cannot be declared there. The **Clear color dice** feature still works: it checks the room's `PROP_DELETE` permission at runtime by issuing a `PROP_DELETE` operation against the scene and notifying you if the room does not allow it. The popover and background page are served from the same dev server at `http://localhost:5173/`.
-
-## Metadata
-
-All keys live under the extension namespace `com.mythic-dice/`. Three are stored on the player, one on each die item, and two are transient request/snapshot keys used during attachment.
-
-### Player metadata (set by the popover, read by the background page)
-
-**`com.mythic-dice/attachedTokenId`** — the id of the character token the player has attached. Set when the player clicks a Character-layer item after pressing **Attach to Token**. Cleared when the token leaves the Character layer, is deleted, or the player presses **Attach to Token** again. Type: string (item id) or `null`.
-
-**`com.mythic-dice/dieColor`** — the color selected for the next roll. Switching it in the popover immediately updates the preview dice to that color's highest flat face. Dice already on the scene keep the color they were rolled in. Type: one of `white`, `red`, `blue`, `green`, `black`.
-
-**`com.mythic-dice/rollRequest`** — a one-shot request from the popover to the background page. Contains the die id, color id, and a unique request id. The background page reads it, rolls the die, and clears the key. Each request id is tracked in a `Set` so a duplicate never produces a second roll. Type: `{ id: string (uuid), die: string, color: string }` or `null`.
-
-### Item metadata (set on each die prop when it is created)
-
-**`com.mythic-dice/die`** — records what the die is, what it rolled, and what phase it is in. Lives on the die's item metadata, not the player. Type: `{ die: string, face: number, color: string, phase: "rolling" | "landed", ownerTokenId: string }`.
-
-### Transient request/snapshot keys (used during attachment)
-
-**`com.mythic-dice/attachPending`** — a flag telling the background page to wait for the next Character-layer selection. Set when the player presses **Attach to Token**. Type: boolean.
-
-**`com.mythic-dice/attachSnapshot`** — a snapshot of the player's selection at the moment **Attach to Token** was pressed. The background page compares the live selection against this snapshot to decide whether the player has clicked a new item. Type: string[] (item ids).
-
-### Where they live in the code
-
-- Player keys: `src/ids.js` (`TOKEN_KEY`, `COLOR_KEY`, `ROLL_KEY`, `PENDING_KEY`, `SNAPSHOT_KEY`, `CLEAR_COLOR_KEY`)
-- Item key: `src/ids.js` (`DIE_KEY`)
-- Popover set/get: `src/main.js`
-- Background read/handle: `src/background.js`
-
-Scene items sync to the room, so other players see the die. The image URL is this dev server. A browser on another machine cannot load `localhost`, so remote players see the item without the picture until the extension is hosted.
-
-The white roll clip is 512×512 VP9, 8 frames, 0.334s, and has no alpha. The roll flash is an opaque square. The landed WebP is the transparent face.
-
-A trailing character on the install link, such as `manifest.json.`, is not a file. The dev server used to answer that with the popover HTML, which Owlbear then tried to parse as JSON. Unknown paths now 404.
+**Clear color dice** removes the dice of the selected color that you rolled from the attached token. Dice rolled by other players, and dice from a different token, stay. If the room does not allow deleting props, the dice stay and Owlbear tells you.
