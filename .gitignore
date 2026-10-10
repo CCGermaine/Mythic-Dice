@@ -35,5 +35,5 @@ dice-renders/
 .env.*
 !.env.example
 
-# Source art (local only, not in git)
-art/
+# Source art is tracked; keep Krita .kra files in art/
+!art/**/*.kra
