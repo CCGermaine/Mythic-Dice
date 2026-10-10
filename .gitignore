@@ -26,3 +26,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Source renders (kept with art, not shipped)
+dice-renders/
+
+# Secrets
+.env
+.env.*
+!.env.example
