@@ -8,4 +8,4 @@ The install URL is https://ccgermaine.github.io/Mythic-Dice/manifest.json. The l
 
 GitHub Actions has to be enabled on the CCGermaine account. A branch deploy still runs as an Actions job. If Actions is disabled, Pages reports a queued build and never publishes.
 
-Local checkout is `/home/manny/Work/mythic-dice`, branch `master`, tracking `origin/main`.
+Local checkout is `/home/manny/Work/mythic-dice`, branch `main`, tracking `origin/main`.
