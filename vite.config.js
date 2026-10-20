@@ -58,11 +58,6 @@ export default defineConfig(({ command }) => ({
       "Access-Control-Allow-Private-Network": "true",
       "Cross-Origin-Resource-Policy": "cross-origin",
     },
-    fs: {
-      allow: [
-        "/home/manny/Work/mythic-dice",
-      ],
-    },
     port: 5173,
     strictPort: true,
   },
